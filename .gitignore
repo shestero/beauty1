@@ -1,41 +1,28 @@
-# Prerequisites
-*.d
+# Build directories
+cmake-build-*/
+build/
+out/
 
-# Compiled Object files
+# Conan
+.conan2/
+conan.lock
+
+# CLion
+.idea/
+
+*.d
 *.slo
 *.lo
 *.o
 *.obj
-
-# Precompiled Headers
 *.gch
 *.pch
-
-# Linker files
 *.ilk
-
-# Debugger Files
 *.pdb
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
 *.exe
 *.out
 *.app
-
-# debug information files
 *.dwo
+
+# OS
+.DS_Store
