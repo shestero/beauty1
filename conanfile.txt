@@ -2,6 +2,7 @@
 boost/1.85.0
 beauty/1.0.6
 cli11/2.6.0
+catch2/3.12.0
 
 [options]
 boost/*:without_system=False

@@ -5,7 +5,12 @@ set(CMAKE_CXX_STANDARD 20)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME}
+        src/main.cpp
+        src/logic.cpp
+)
+
+add_subdirectory(tests)
 
 find_package(Boost REQUIRED COMPONENTS urls system)
 find_package(beauty REQUIRED)

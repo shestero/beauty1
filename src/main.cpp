@@ -8,30 +8,61 @@
 #include <boost/asio/ip/address.hpp>
 
 #include "GetParams.hpp"
+#include "logic.h"
 
-// Business logic example: generate greeting message
-std::string logic(std::string_view name) {
-    return std::format("Hello, {}!", name);
-}
+inline const std::string TITLE = "Beauty server example (above Boost.Beast)";
+inline const std::string ANONYMOUS = "Anonymous";
 
 // Log request and response into stdout
-void report(const beauty::request& req, std::string_view response) {
+void report(const beauty::request &req, std::string_view response) {
     const auto tstamp = std::format("[{:%Y-%m-%d %H:%M:%S}]\t", std::chrono::system_clock::now());
     std::osyncstream cout(std::cout);
     cout << tstamp << " Request: " << req.target() << std::endl;
     cout << tstamp << "Response: " << response << std::endl << std::endl;
 }
 
-int main(int argc, char** argv)
-{
+void setup_server(beauty::server &server, std::string host, int port, std::string default_name = ANONYMOUS) {
+    server.info({.title = TITLE});
+
+    // Root endpoint
+    server.add_route("/")
+            .get(
+                    {.description = "Server's root"},
+                    [](const auto & /* req */, auto &res) {
+                        res.body() = "Greeter is here!";
+                    });
+
+    // Greeting endpoint: /greet?name=...
+    server.add_route("/greet")
+            .get(
+                    {
+                            .description = "Greet a person",
+                            .route_parameters = {
+                                    {"name", "get", "The person name", "string", "", false},
+                            },
+                    },
+                    [default_name](const auto &req, auto &res) {
+                        GetParams params(req);
+                        auto name = params.get("name").value_or(default_name);
+
+                        auto resp = logic(name);
+                        report(req, resp);
+                        res.body() = resp;
+                    });
+
+    // Enabling Swagger (optional)
+    server.enable_swagger();
+}
+
+int main(int argc, char **argv) {
     // === Command-line / environment configuration ===========================
 
-    CLI::App app{"Beauty server example (above Boost.Beast)"};
+    CLI::App app{TITLE};
 
-    std::string host { "127.0.0.1" };
+    std::string host{"127.0.0.1"};
     app.add_option("-H,--host", host, "Default binding host")
             ->envname("SERVER_HOST")
-            ->check([](const std::string& s) -> std::string {
+            ->check([](const std::string &s) -> std::string {
                 if (s == "localhost" || s == "0.0.0.0" || s == "::")
                     return {};
                 boost::system::error_code ec;
@@ -41,7 +72,7 @@ int main(int argc, char** argv)
                 return {};
             });
     int port = 8080;
-    std::string default_name { "Anonymous" };
+    std::string default_name{ANONYMOUS};
     app.add_option("-p,--port", port, "Port number")
             ->envname("SERVER_PORT")
             ->check(CLI::Range(1024, 65535));
@@ -51,28 +82,10 @@ int main(int argc, char** argv)
 
     CLI11_PARSE(app, argc, argv);
 
-    // === Server setup =======================================================
+    // === Create and run the server ==========================================
 
     beauty::server server;
-
-    // Root endpoint
-    server.add_route("/")
-            .get([](const auto& /* req */, auto& res) {
-                res.body() = "Hi!";
-            });
-
-    // Greeting endpoint: /greeting?name=...
-    server.add_route("/greeting")
-            .get([&default_name](const auto& req, auto& res) {
-                GetParams params(req);
-                auto name = params.get("name").value_or(default_name);
-
-                auto resp = logic(name);
-                report(req, resp);
-                res.body() = resp;
-            });
-
-    // === Run server =========================================================
+    setup_server(server, host, port, default_name);
 
     std::cout << "Starting server at " << host << ":" << port << " ..." << std::endl;
 
