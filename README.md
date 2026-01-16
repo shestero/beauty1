@@ -13,15 +13,16 @@ Beauty server example
   ```bash
   conan install . --output-folder=conan --build=missing -s build_type=Release
   ```
-  <br>_(In case of first use of Conan you may need initialize the profile like that:
+  _(In case of first use of Conan you may need initialize the profile like that:
   *conan profile detect --force*)_
 * Configure the project with CMake:
   ```bash
-  cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=conan/build/Release/generators/conan_toolchain.cmake \
+  cmake -S . -B build \
+  -DCMAKE_TOOLCHAIN_FILE=conan/build/Release/generators/conan_toolchain.cmake \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_CXX_COMPILER=g++-13
   ```
-  <br>_(In my case I have to explicitly set compiler to g++-13 to support C++20.
+  _(In my case I have to explicitly set compiler to g++-13 to support C++20.
   You may not need do this)._
 * Build:
   ```bash
@@ -51,7 +52,7 @@ Beauty server example
   cmake/4.2.1
   ```
   _(CMake 4.2.1 is required with MS VS 2026! You don't need this step if you have MS VS 2022)._
-* in my case I had to manually change C++ standard from 14 to 20 inside the profile.
+* in my case I had to manually change C++ standard from 14 to 20 in Conan profile.
 * Create directories:
   ```bat
   mkdir build conan
