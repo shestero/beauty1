@@ -46,7 +46,9 @@ void setup_server(beauty::server &server, std::string host, int port, std::strin
                         auto name = params.get("name").value_or(default_name);
 
                         auto resp = logic(name);
+
                         report(req, resp);
+                        res.set(boost::beast::http::field::content_type, "text/plain; charset=utf-8");
                         res.body() = resp;
                     });
 
