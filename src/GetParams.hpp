@@ -23,7 +23,8 @@ public:
         if (it == params.end())
             return std::nullopt;
 
-        auto dv = boost::urls::decode_view((*it).value);
+        const std::string value = (*it).value;
+        auto dv = boost::urls::decode_view(value);
         return std::string(dv.begin(), dv.end()); // copy
     }
 

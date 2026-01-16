@@ -5,6 +5,7 @@ cli11/2.6.0
 catch2/3.12.0
 
 [options]
+openssl/*:no_asm=True
 boost/*:without_system=False
 boost/*:without_urls=False
 

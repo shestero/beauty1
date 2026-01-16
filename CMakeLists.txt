@@ -11,6 +11,7 @@ add_executable(${PROJECT_NAME}
 )
 
 add_subdirectory(tests)
+enable_testing()
 
 find_package(Boost REQUIRED COMPONENTS urls system)
 find_package(beauty REQUIRED)
